@@ -7,6 +7,27 @@ private:
 	int maxNoSeats;
 	char* locationName;
 public:
+
+	Location() {
+		locationName = new char[20];
+		noRows = 0;
+		maxNoSeats = 0;
+	}
+
+	Location(char* name, int rows, int seats) {
+		locationName = new char[strlen(name) + 1];
+		strcpy(locationName, name);
+		noRows = rows;
+		maxNoSeats = seats;
+	}
+
+	Location(const Location& loc) {
+		locationName = new char[strlen(loc.locationName)+1];
+		strcpy(locationName, loc.locationName);
+		noRows = loc.noRows;
+		maxNoSeats = loc.maxNoSeats;
+	}
+
 	int getNoRows() {
 		return this->noRows;
 	}
@@ -15,12 +36,12 @@ public:
 		this->noRows = noRows;
 	}
 
-	void setMaxNoSeats(int maxNoSeats) {
-		this->maxNoSeats = maxNoSeats;
-	}
-
 	int getMaxNoSeats() {
 		return this->maxNoSeats;
+	}
+
+	void setMaxNoSeats(int maxNoSeats) {
+		this->maxNoSeats = maxNoSeats;
 	}
 
 	char* getLocationName() {
@@ -51,7 +72,46 @@ public:
 	class Event {
 	private:
 		char* eventName;
+		string date;
+		Location location;
 	public:
+
+		Event() {
+			eventName = new char[20];
+			date = "";
+			location = Location();
+		}
+
+		Event(char* name, string newDate, Location newLocation) {
+			eventName = new char[strlen(name) + 1];
+			strcpy(eventName, name);
+			date = newDate;
+			location = newLocation;
+		}
+
+		Event(const Event& newEvent) {
+			eventName = new char[strlen(newEvent.eventName) + 1];
+			strcpy(eventName, newEvent.eventName);
+			date = newEvent.date;
+			location = newEvent.location;
+		}
+
+		Location getLocation() {
+			return location;
+		}
+
+		void setLocation(Location newLocation) {
+			location = newLocation;
+		}
+
+		string getDate() {
+			return date;
+		}
+
+		void setDate(string newDate) {
+			date = newDate;
+		}
+
 		char* getEventName() {
 			if (eventName != nullptr)
 			{
@@ -80,14 +140,60 @@ public:
 
 	class Ticket {
 	private:
-		int tribune;
+		char tribune;
+		bool isVip;
+		int seatNo;
+		Event event;
 	public:
 
-		int getTribune() {
+		Ticket() {
+			tribune = ' ';
+			isVip = false;
+			seatNo = 0;
+			event = Event();
+		}
+
+		Ticket(char newTribune, bool newIsVip, int newSeatNo, Event newEvent) {
+			tribune = newTribune;
+			isVip = newIsVip;
+			seatNo = newSeatNo;
+			event = newEvent;
+		}
+
+		Event getEvent() {
+			return event;
+		}
+
+		void setEvent(Event newEvent) {
+			event = newEvent;
+		}
+
+		char getTribune() {
 			return this->tribune;
 		}
 
-		void setTribune(int tribune) {
+		void setTribune(char tribune) {
 			this->tribune = tribune;
 		}
+
+		bool getIsVip() {
+			return isVip;
+		}
+
+		void setIsVip(bool vip) {
+			isVip = vip;
+		}
+
+		int getSeatNo() {
+			return seatNo;
+		}
+
+		void setSeatNo(int newSeatNo) {
+			seatNo = newSeatNo;
+		}
 	};
+
+	void  main() {
+		
+
+	}
