@@ -1,4 +1,5 @@
 #include <iostream>
+#include <time.h>
 using namespace std;
 
 class Location {
@@ -26,6 +27,11 @@ public:
 		strcpy(locationName, loc.locationName);
 		noRows = loc.noRows;
 		maxNoSeats = loc.maxNoSeats;
+	}
+
+	~Location() {
+		delete[] locationName;
+		locationName = nullptr;
 	}
 
 	int getNoRows() {
@@ -71,27 +77,21 @@ public:
 
 	class Event {
 	private:
-		char* eventName;
+		const string eventName;
 		string date;
 		Location location;
 	public:
-
-		Event() {
-			eventName = new char[20];
+		Event() :eventName(""){
 			date = "";
 			location = Location();
 		}
 
-		Event(char* name, string newDate, Location newLocation) {
-			eventName = new char[strlen(name) + 1];
-			strcpy(eventName, name);
+		Event(string name, string newDate, Location newLocation) :eventName(name){
 			date = newDate;
 			location = newLocation;
 		}
 
-		Event(const Event& newEvent) {
-			eventName = new char[strlen(newEvent.eventName) + 1];
-			strcpy(eventName, newEvent.eventName);
+		Event(const Event& newEvent) :eventName(newEvent.eventName){
 			date = newEvent.date;
 			location = newEvent.location;
 		}
@@ -112,60 +112,67 @@ public:
 			date = newDate;
 		}
 
-		char* getEventName() {
-			if (eventName != nullptr)
-			{
-				char* copy = new char[strlen(eventName) + 1];
-				strcpy_s(copy, strlen(eventName) + 1, eventName);
-				return copy;
-			}
-			else
-			{
-				return nullptr;
-			}
+		const string getEventName() {
+			return eventName;
 		}
 
-		void SetEventName(const char* eventName) {
-
-			if (eventName != nullptr) {
-				if (this->eventName != nullptr) {
-					delete[] this->eventName;
-				}
-				this->eventName = new char[strlen(eventName) + 1];
-				strcpy_s(this->eventName, strlen(eventName) + 1, eventName);
-			}
+		Event& operator = (const Event& event) {
+			date = event.date;
+			location = event.location;
+			return *this;
 		}
 
 	};
 
 	class Ticket {
 	private:
+		int ticketID;
 		char tribune;
 		bool isVip;
-		int seatNo;
+		int* seatNo;
 		Event event;
+		static int noTickets;
 	public:
 
 		Ticket() {
 			tribune = ' ';
 			isVip = false;
-			seatNo = 0;
+			seatNo = new int[10];
 			event = Event();
+			noTickets = 0;
+			ticketID = 0;
 		}
 
-		Ticket(char newTribune, bool newIsVip, int newSeatNo, Event newEvent) {
+		Ticket(int newID, char newTribune, bool newIsVip, int* newSeatNo, Event newEvent) {
 			tribune = newTribune;
 			isVip = newIsVip;
-			seatNo = newSeatNo;
+			seatNo = new int[sizeof(newSeatNo)*sizeof(int)];
+			*seatNo = *newSeatNo;
 			event = newEvent;
+			noTickets++;
+			ticketID = newID;
 		}
+
+		~Ticket() {
+			delete[] seatNo;
+			seatNo = nullptr;
+		}
+
 
 		Event getEvent() {
 			return event;
 		}
 
+		const int getTicketID() {
+			return ticketID;
+		}
+
+		void setTicketID(int newID) {
+			ticketID = newID;
+		}
+
 		void setEvent(Event newEvent) {
-			event = newEvent;
+			event = newEvent ;
 		}
 
 		char getTribune() {
@@ -184,16 +191,35 @@ public:
 			isVip = vip;
 		}
 
-		int getSeatNo() {
-			return seatNo;
+		int* getSeatNo() {
+			int* copy = new int[sizeof(seatNo)*sizeof(int)];
+			*copy = *seatNo;
+			return copy;
 		}
 
-		void setSeatNo(int newSeatNo) {
-			seatNo = newSeatNo;
+		void setSeatNo(int* newSeatNo) {
+			int* seatNo = new int[sizeof(newSeatNo) * sizeof(int)];
+			*seatNo = *newSeatNo;
 		}
+
+		static void setNoTickets(int newNoTickets) {
+			noTickets = newNoTickets;
+		}
+
+		static int generateRandomTicketID() {
+			srand(time(0));
+			return rand();
+		}
+		
 	};
 
 	void  main() {
-		
+		Location l;
+		Event e;
+		int i[2] = { 1,2 };
+
+		Ticket::setNoTickets(0);
+		Ticket t(Ticket::generateRandomTicketID(), 'A', false, i, e);
+		cout << t.getTicketID();
 
 	}
